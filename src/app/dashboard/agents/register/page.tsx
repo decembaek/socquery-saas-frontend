@@ -5,7 +5,7 @@ import { agentApi, ApiError, type AgentGroup } from '@/lib/api';
 
 const AGENT_RELEASE_BASE =
   process.env.NEXT_PUBLIC_AGENT_RELEASE_URL ||
-  'https://github.com/decembaek/socquery-client-agent/releases/latest/download';
+  'https://github.com/decembaek/socquery-agent-go/releases/latest/download';
 
 const OS_OPTIONS = [
   { id: 'linux', label: 'Linux (x64)', asset: 'soc-linux', isWindows: false },
@@ -379,11 +379,25 @@ export default function RegisterAgentPage() {
                   title="Copy"
                 >
                   {copiedBlock === 'download' ? (
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="2">
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="#10b981"
+                      strokeWidth="2"
+                    >
                       <polyline points="20 6 9 17 4 12" />
                     </svg>
                   ) : (
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
                       <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
                       <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
                     </svg>
@@ -411,11 +425,25 @@ export default function RegisterAgentPage() {
                   title="Copy"
                 >
                   {copiedBlock === 'run' ? (
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="2">
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="#10b981"
+                      strokeWidth="2"
+                    >
                       <polyline points="20 6 9 17 4 12" />
                     </svg>
                   ) : (
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
                       <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
                       <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
                     </svg>
@@ -424,13 +452,13 @@ export default function RegisterAgentPage() {
               </div>
             </div>
 
-            <div className="p-3 bg-bg-tertiary rounded-sm text-[12px] text-text-secondary space-y-1">
+            {/* <div className="p-3 bg-bg-tertiary rounded-sm text-[12px] text-text-secondary space-y-1">
               <p>The agent will:</p>
               <p className="pl-3">1. Validate the token with the server</p>
               <p className="pl-3">2. Provision an AWS IoT Core certificate</p>
               <p className="pl-3">3. Store credentials locally (encrypted)</p>
               <p className="pl-3">4. Connect via MQTT and start monitoring</p>
-            </div>
+            </div> */}
           </div>
 
           <button
