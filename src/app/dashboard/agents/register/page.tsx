@@ -452,6 +452,136 @@ export default function RegisterAgentPage() {
               </div>
             </div>
 
+            {/* Optional: install as `soc` so you can run from anywhere */}
+            <div className="mb-4">
+              <p className="text-[12px] font-medium text-text-primary mb-1.5">
+                2c. (Optional) Install as{' '}
+                <code className="bg-bg-tertiary px-1 rounded text-[11px]">
+                  soc
+                </code>{' '}
+                command
+              </p>
+              <p className="text-[11px] text-text-tertiary mb-2">
+                After this, you can run{' '}
+                <code className="bg-bg-tertiary px-0.5 rounded">
+                  soc --token &quot;...&quot;
+                </code>{' '}
+                from any directory.
+              </p>
+              {selectedOS.isWindows ? (
+                <div className="space-y-2">
+                  <div className="relative">
+                    <pre className="bg-[#1e1e2e] text-[#a6adc8] rounded-sm p-4 pr-12 font-mono text-[12px] overflow-x-auto whitespace-pre-wrap break-all">
+                      {`# Create a bin folder and copy soc.exe
+New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\\bin" | Out-Null
+Copy-Item ${selectedOS.asset} "$env:USERPROFILE\\bin\\soc.exe"
+
+# Add to PATH (current user): run this once, then restart the terminal
+[Environment]::SetEnvironmentVariable("Path", $env:Path + ";$env:USERPROFILE\\bin", "User")`}
+                    </pre>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        handleCopyBlock(
+                          `New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\\bin" | Out-Null\nCopy-Item ${selectedOS.asset} "$env:USERPROFILE\\bin\\soc.exe"\n[Environment]::SetEnvironmentVariable("Path", $env:Path + ";$env:USERPROFILE\\bin", "User")`,
+                          'install',
+                        )
+                      }
+                      className="absolute top-3 right-3 p-1.5 rounded-sm hover:bg-white/10 transition-colors cursor-pointer"
+                      title="Copy"
+                    >
+                      {copiedBlock === 'install' ? (
+                        <svg
+                          width="16"
+                          height="16"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="#10b981"
+                          strokeWidth="2"
+                        >
+                          <polyline points="20 6 9 17 4 12" />
+                        </svg>
+                      ) : (
+                        <svg
+                          width="16"
+                          height="16"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                        >
+                          <rect
+                            x="9"
+                            y="9"
+                            width="13"
+                            height="13"
+                            rx="2"
+                            ry="2"
+                          />
+                          <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
+                        </svg>
+                      )}
+                    </button>
+                  </div>
+                  <p className="text-[11px] text-text-tertiary">
+                    Restart your terminal, then run:{' '}
+                    <code className="bg-bg-tertiary px-0.5 rounded">
+                      soc --token &quot;...&quot;
+                    </code>
+                  </p>
+                </div>
+              ) : (
+                <div className="relative">
+                  <pre className="bg-[#1e1e2e] text-[#a6adc8] rounded-sm p-4 pr-12 font-mono text-[12px] overflow-x-auto whitespace-pre-wrap break-all">
+                    {`sudo mv ${selectedOS.asset} /usr/local/bin/soc && chmod +x /usr/local/bin/soc`}
+                  </pre>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      handleCopyBlock(
+                        `sudo mv ${selectedOS.asset} /usr/local/bin/soc && chmod +x /usr/local/bin/soc`,
+                        'install',
+                      )
+                    }
+                    className="absolute top-3 right-3 p-1.5 rounded-sm hover:bg-white/10 transition-colors cursor-pointer"
+                    title="Copy"
+                  >
+                    {copiedBlock === 'install' ? (
+                      <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="#10b981"
+                        strokeWidth="2"
+                      >
+                        <polyline points="20 6 9 17 4 12" />
+                      </svg>
+                    ) : (
+                      <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                      >
+                        <rect
+                          x="9"
+                          y="9"
+                          width="13"
+                          height="13"
+                          rx="2"
+                          ry="2"
+                        />
+                        <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
+                      </svg>
+                    )}
+                  </button>
+                </div>
+              )}
+            </div>
+
             {/* <div className="p-3 bg-bg-tertiary rounded-sm text-[12px] text-text-secondary space-y-1">
               <p>The agent will:</p>
               <p className="pl-3">1. Validate the token with the server</p>
