@@ -1,5 +1,4 @@
-const API_BASE =
-  process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8787/api/v1';
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || '/api/v1';
 
 // ─── 토큰 관리 ───
 
@@ -326,17 +325,18 @@ export type AgentAlertOccurrence = {
 export const agentApi = {
   // 등록 토큰
   createToken(displayName: string, expiresIn?: number, groupId?: string) {
-    return apiFetch<{ token: string; expires_at: number; display_name: string }>(
-      '/agents/tokens',
-      {
+    return apiFetch<{
+      token: string;
+      expires_at: number;
+      display_name: string;
+    }>('/agents/tokens', {
       method: 'POST',
       body: JSON.stringify({
         display_name: displayName,
         expires_in: expiresIn,
         group_id: groupId,
       }),
-    },
-    );
+    });
   },
 
   listTokens() {
@@ -442,11 +442,14 @@ export const agentApi = {
     });
   },
 
-  updateGroup(id: string, data: {
-    name?: string;
-    category?: 'store' | 'region' | 'device_type' | 'customer';
-    description?: string;
-  }) {
+  updateGroup(
+    id: string,
+    data: {
+      name?: string;
+      category?: 'store' | 'region' | 'device_type' | 'customer';
+      description?: string;
+    },
+  ) {
     return apiFetch<{ ok: boolean }>(`/agents/groups/${id}`, {
       method: 'PUT',
       body: JSON.stringify(data),
@@ -501,16 +504,22 @@ export const agentApi = {
       webhook_url: string;
     }>,
   ) {
-    return apiFetch<{ ok: boolean }>(`/agents/groups/${groupId}/rules/${ruleId}`, {
-      method: 'PUT',
-      body: JSON.stringify(data),
-    });
+    return apiFetch<{ ok: boolean }>(
+      `/agents/groups/${groupId}/rules/${ruleId}`,
+      {
+        method: 'PUT',
+        body: JSON.stringify(data),
+      },
+    );
   },
 
   deleteGroupRule(groupId: string, ruleId: string) {
-    return apiFetch<{ ok: boolean }>(`/agents/groups/${groupId}/rules/${ruleId}`, {
-      method: 'DELETE',
-    });
+    return apiFetch<{ ok: boolean }>(
+      `/agents/groups/${groupId}/rules/${ruleId}`,
+      {
+        method: 'DELETE',
+      },
+    );
   },
 
   listGroupAlertChannels(groupId: string) {
@@ -568,7 +577,10 @@ export const agentApi = {
     );
   },
 
-  listGroupAlerts(groupId: string, params?: { limit?: number; offset?: number }) {
+  listGroupAlerts(
+    groupId: string,
+    params?: { limit?: number; offset?: number },
+  ) {
     const qs = new URLSearchParams();
     if (params?.limit) qs.set('limit', String(params.limit));
     if (params?.offset) qs.set('offset', String(params.offset));
