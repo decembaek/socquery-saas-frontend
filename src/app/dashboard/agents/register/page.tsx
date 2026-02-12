@@ -5,7 +5,7 @@ import { agentApi, ApiError, type AgentGroup } from '@/lib/api';
 
 const AGENT_RELEASE_BASE =
   process.env.NEXT_PUBLIC_AGENT_RELEASE_URL ||
-  'https://github.com/decembaek/socquery-agent-go/releases/latest/download';
+  'https://download.socquery.com/releases/latest';
 
 const OS_OPTIONS = [
   { id: 'linux', label: 'Linux (x64)', asset: 'soc-linux', isWindows: false },
