@@ -22,14 +22,14 @@
     // see https://opennext.js.org/cloudflare/howtos/image
     "binding": "IMAGES",
   },
-  "services": [
-    {
-      // Self-reference service binding, the service name must match the worker name
-      // see https://opennext.js.org/cloudflare/caching
-      "binding": "WORKER_SELF_REFERENCE",
-      "service": "soquery-saas-frontend",
-    },
-  ],
+  // Self-reference fails on first deploy (target worker does not exist yet).
+  // Re-enable after first successful deploy if you need OpenNext caching.
+  // "services": [
+  //   {
+  //     "binding": "WORKER_SELF_REFERENCE",
+  //     "service": "soquery-saas-frontend",
+  //   },
+  // ],
   "observability": {
     "enabled": true,
   },
