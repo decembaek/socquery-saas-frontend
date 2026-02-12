@@ -11,13 +11,24 @@ import {
 } from '@/lib/api';
 
 type Tab = 'events' | 'commands';
-type EventFilter = 'all' | 'status' | 'telemetry' | 'scan' | 'anomaly' | 'response';
+type EventFilter =
+  | 'all'
+  | 'status'
+  | 'telemetry'
+  | 'scan'
+  | 'anomaly'
+  | 'response';
 
 // ─── Extracted data types ───
 
 interface SystemMetrics {
   cpu?: { usagePercent?: number; cores?: number };
-  memory?: { usagePercent?: number; totalGB?: number; freeGB?: number; usedGB?: number };
+  memory?: {
+    usagePercent?: number;
+    totalGB?: number;
+    freeGB?: number;
+    usedGB?: number;
+  };
   disk?: { usagePercent?: number; totalGB?: number; freeGB?: number };
 }
 
@@ -113,7 +124,9 @@ export default function AgentDetailPage() {
       .map((e) => {
         const d = e.data as Record<string, unknown>;
         const details =
-          d.details && typeof d.details === 'object' && !Array.isArray(d.details)
+          d.details &&
+          typeof d.details === 'object' &&
+          !Array.isArray(d.details)
             ? (d.details as Record<string, unknown>)
             : {};
         return {
@@ -128,7 +141,12 @@ export default function AgentDetailPage() {
   }, [events]);
 
   const latestProcesses = useMemo<ProcessEntry[]>(() => {
-    const procItem = (p: { name?: string; cpu?: number; mem?: number; pid?: number }) => ({
+    const procItem = (p: {
+      name?: string;
+      cpu?: number;
+      mem?: number;
+      pid?: number;
+    }) => ({
       name: String(p.name || 'unknown'),
       cpu: p.cpu,
       mem: p.mem,
@@ -136,8 +154,12 @@ export default function AgentDetailPage() {
     });
     for (const ev of events) {
       const d = ev.data as Record<string, unknown>;
-      let topCpu = d.topCpu as Array<{ name?: string; cpu?: number; mem?: number; pid?: number }> | undefined;
-      let topMem = d.topMem as Array<{ name?: string; cpu?: number; mem?: number; pid?: number }> | undefined;
+      let topCpu = d.topCpu as
+        | Array<{ name?: string; cpu?: number; mem?: number; pid?: number }>
+        | undefined;
+      let topMem = d.topMem as
+        | Array<{ name?: string; cpu?: number; mem?: number; pid?: number }>
+        | undefined;
       const processBlock = d.process as Record<string, unknown> | undefined;
       if (processBlock?.topCpu || processBlock?.topMem) {
         topCpu = processBlock.topCpu as typeof topCpu;
@@ -159,7 +181,9 @@ export default function AgentDetailPage() {
             pid: existing?.pid ?? e.pid,
           });
         }
-        return Array.from(byName.values()).sort((a, b) => (b.cpu ?? 0) - (a.cpu ?? 0)).slice(0, 15);
+        return Array.from(byName.values())
+          .sort((a, b) => (b.cpu ?? 0) - (a.cpu ?? 0))
+          .slice(0, 15);
       }
     }
     return [];
@@ -228,7 +252,16 @@ export default function AgentDetailPage() {
             className="p-1.5 rounded-sm hover:bg-bg-tertiary transition-colors cursor-pointer text-text-secondary shrink-0"
             aria-label="Back to agents"
           >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
               <path d="M19 12H5" />
               <polyline points="12 19 5 12 12 5" />
             </svg>
@@ -271,7 +304,11 @@ export default function AgentDetailPage() {
               label="CPU"
               value={latestMetrics.cpu.usagePercent ?? 0}
               unit="%"
-              sub={latestMetrics.cpu.cores ? `${latestMetrics.cpu.cores} cores` : undefined}
+              sub={
+                latestMetrics.cpu.cores
+                  ? `${latestMetrics.cpu.cores} cores`
+                  : undefined
+              }
             />
           ) : (
             <InfoCard label="CPU" value="-" />
@@ -281,7 +318,11 @@ export default function AgentDetailPage() {
               label="Memory"
               value={latestMetrics.memory.usagePercent ?? 0}
               unit="%"
-              sub={latestMetrics.memory.totalGB ? `${latestMetrics.memory.freeGB?.toFixed(1) ?? '?'} / ${latestMetrics.memory.totalGB.toFixed(1)} GB free` : undefined}
+              sub={
+                latestMetrics.memory.totalGB
+                  ? `${latestMetrics.memory.freeGB?.toFixed(1) ?? '?'} / ${latestMetrics.memory.totalGB.toFixed(1)} GB free`
+                  : undefined
+              }
             />
           ) : (
             <InfoCard label="Memory" value="-" />
@@ -291,16 +332,28 @@ export default function AgentDetailPage() {
               label="Disk"
               value={latestMetrics.disk.usagePercent ?? 0}
               unit="%"
-              sub={latestMetrics.disk.totalGB ? `${latestMetrics.disk.freeGB?.toFixed(1) ?? '?'} / ${latestMetrics.disk.totalGB.toFixed(1)} GB free` : undefined}
+              sub={
+                latestMetrics.disk.totalGB
+                  ? `${latestMetrics.disk.freeGB?.toFixed(1) ?? '?'} / ${latestMetrics.disk.totalGB.toFixed(1)} GB free`
+                  : undefined
+              }
             />
           ) : (
             <InfoCard label="Disk" value="-" />
           )}
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-          <InfoCard label="OS / Arch" value={agent.os ? `${agent.os} / ${agent.arch}` : '-'} />
+          <InfoCard
+            label="OS / Arch"
+            value={agent.os ? `${agent.os} / ${agent.arch}` : '-'}
+          />
           <InfoCard label="Version" value={agent.version || '-'} mono />
-          <InfoCard label="Last Seen" value={agent.last_seen_at ? formatRelative(agent.last_seen_at) : 'Never'} />
+          <InfoCard
+            label="Last Seen"
+            value={
+              agent.last_seen_at ? formatRelative(agent.last_seen_at) : 'Never'
+            }
+          />
           <InfoCard label="Registered" value={formatTime(agent.created_at)} />
         </div>
 
@@ -309,24 +362,41 @@ export default function AgentDetailPage() {
             <div className="px-4 py-3 border-b border-border-primary text-[13px] font-semibold text-text-primary">
               USB Devices
               {latestUSB.length > 0 && (
-                <span className="ml-2 text-[11px] font-normal text-text-tertiary">{latestUSB.length} connected</span>
+                <span className="ml-2 text-[11px] font-normal text-text-tertiary">
+                  {latestUSB.length} connected
+                </span>
               )}
             </div>
             <div className="max-h-[220px] overflow-y-auto divide-y divide-border-primary">
               {latestUSB.length === 0 ? (
-                <div className="p-4 text-[13px] text-text-tertiary text-center">No USB devices detected.</div>
+                <div className="p-4 text-[13px] text-text-tertiary text-center">
+                  No USB devices detected.
+                </div>
               ) : (
                 latestUSB.map((dev, i) => (
                   <div key={i} className="flex items-center gap-3 px-4 py-2.5">
                     <div className="w-7 h-7 rounded bg-bg-tertiary flex items-center justify-center shrink-0">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-text-tertiary">
+                      <svg
+                        width="14"
+                        height="14"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        className="text-text-tertiary"
+                      >
                         <rect x="4" y="2" width="16" height="20" rx="2" />
                         <line x1="12" y1="18" x2="12" y2="18.01" />
                       </svg>
                     </div>
                     <div className="min-w-0 flex-1">
-                      <div className="text-[12px] font-medium text-text-primary truncate">{dev.vendor || 'Unknown'} {dev.product || ''}</div>
-                      <div className="text-[10px] text-text-tertiary font-mono">{dev.vendorId || '????'}:{dev.productId || '????'}{dev.serial ? ` / ${dev.serial}` : ''}</div>
+                      <div className="text-[12px] font-medium text-text-primary truncate">
+                        {dev.vendor || 'Unknown'} {dev.product || ''}
+                      </div>
+                      <div className="text-[10px] text-text-tertiary font-mono">
+                        {dev.vendorId || '????'}:{dev.productId || '????'}
+                        {dev.serial ? ` / ${dev.serial}` : ''}
+                      </div>
                     </div>
                   </div>
                 ))
@@ -338,22 +408,43 @@ export default function AgentDetailPage() {
             <div className="px-4 py-3 border-b border-border-primary text-[13px] font-semibold text-text-primary">
               Process list
               {latestProcesses.length > 0 && (
-                <span className="ml-2 text-[11px] font-normal text-text-tertiary">top {latestProcesses.length} by CPU</span>
+                <span className="ml-2 text-[11px] font-normal text-text-tertiary">
+                  top {latestProcesses.length} by CPU
+                </span>
               )}
             </div>
             <div className="max-h-[220px] overflow-y-auto divide-y divide-border-primary">
               {latestProcesses.length === 0 ? (
-                <div className="p-4 text-[13px] text-text-tertiary text-center">No process data yet. Run scan_process or scan_all.</div>
+                <div className="p-4 text-[13px] text-text-tertiary text-center">
+                  No process data yet. Run scan_process or scan_all.
+                </div>
               ) : (
                 latestProcesses.map((proc, i) => (
-                  <div key={i} className="flex items-center justify-between gap-3 px-4 py-2.5">
+                  <div
+                    key={i}
+                    className="flex items-center justify-between gap-3 px-4 py-2.5"
+                  >
                     <div className="min-w-0 flex-1">
-                      <div className="text-[12px] font-medium text-text-primary truncate">{proc.name}</div>
-                      {proc.pid != null && <div className="text-[10px] text-text-tertiary font-mono">PID {proc.pid}</div>}
+                      <div className="text-[12px] font-medium text-text-primary truncate">
+                        {proc.name}
+                      </div>
+                      {proc.pid != null && (
+                        <div className="text-[10px] text-text-tertiary font-mono">
+                          PID {proc.pid}
+                        </div>
+                      )}
                     </div>
                     <div className="flex gap-3 shrink-0 text-[11px]">
-                      {proc.cpu != null && <span className="text-text-secondary">CPU {proc.cpu.toFixed(1)}%</span>}
-                      {proc.mem != null && <span className="text-text-tertiary">Mem {proc.mem.toFixed(1)}%</span>}
+                      {proc.cpu != null && (
+                        <span className="text-text-secondary">
+                          CPU {proc.cpu.toFixed(1)}%
+                        </span>
+                      )}
+                      {proc.mem != null && (
+                        <span className="text-text-tertiary">
+                          Mem {proc.mem.toFixed(1)}%
+                        </span>
+                      )}
                     </div>
                   </div>
                 ))
@@ -371,8 +462,12 @@ export default function AgentDetailPage() {
               {recentAnomalies.slice(0, 3).map((a, i) => (
                 <div key={i} className="flex items-center gap-2 px-4 py-2.5">
                   <SeverityBadge severity={a.severity} />
-                  <span className="text-[12px] text-text-primary flex-1 truncate">{a.message}</span>
-                  <span className="text-[10px] text-text-tertiary shrink-0">{formatRelative(a.timestamp)}</span>
+                  <span className="text-[12px] text-text-primary flex-1 truncate">
+                    {a.message}
+                  </span>
+                  <span className="text-[10px] text-text-tertiary shrink-0">
+                    {formatRelative(a.timestamp)}
+                  </span>
                 </div>
               ))}
             </div>
@@ -382,7 +477,9 @@ export default function AgentDetailPage() {
 
       {/* ── Group Assignment ── */}
       <div className="bg-bg-secondary rounded-md border border-border-primary shadow-sm p-4 sm:p-5">
-        <h3 className="text-[14px] font-semibold text-text-primary mb-3">Group Assignment</h3>
+        <h3 className="text-[14px] font-semibold text-text-primary mb-3">
+          Group Assignment
+        </h3>
         <div className="flex flex-col sm:flex-row sm:items-center gap-3">
           <select
             value={agent.group_id || ''}
@@ -392,7 +489,9 @@ export default function AgentDetailPage() {
           >
             <option value="">No group</option>
             {groups.map((g) => (
-              <option key={g.id} value={g.id}>{g.name}</option>
+              <option key={g.id} value={g.id}>
+                {g.name}
+              </option>
             ))}
           </select>
           <button
@@ -402,13 +501,17 @@ export default function AgentDetailPage() {
           >
             Manage Groups
           </button>
-          {updatingGroup && <span className="text-[12px] text-text-tertiary">Updating...</span>}
+          {updatingGroup && (
+            <span className="text-[12px] text-text-tertiary">Updating...</span>
+          )}
         </div>
       </div>
 
       {/* ── Command Panel ── */}
       <div className="bg-bg-secondary rounded-md border border-border-primary shadow-sm p-4 sm:p-5">
-        <h3 className="text-[14px] font-semibold text-text-primary mb-3">Send Command</h3>
+        <h3 className="text-[14px] font-semibold text-text-primary mb-3">
+          Send Command
+        </h3>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-3">
           <select
             value={commandAction}
@@ -443,10 +546,13 @@ export default function AgentDetailPage() {
       {/* ── Tabs: Events / Commands ── */}
       <div className="min-w-0">
         <div className="flex items-center gap-0 border-b border-border-primary overflow-x-auto">
-          {([
+          {[
             { key: 'events' as const, label: `Events (${events.length})` },
-            { key: 'commands' as const, label: `Commands (${commands.length})` },
-          ]).map((t) => (
+            {
+              key: 'commands' as const,
+              label: `Commands (${commands.length})`,
+            },
+          ].map((t) => (
             <button
               key={t.key}
               onClick={() => setTab(t.key)}
@@ -474,34 +580,69 @@ export default function AgentDetailPage() {
 // Sub Components
 // ═══════════════════════════════════════════════════════════════════
 
-function InfoCard({ label, value, mono }: { label: string; value: string; mono?: boolean }) {
+function InfoCard({
+  label,
+  value,
+  mono,
+}: {
+  label: string;
+  value: string;
+  mono?: boolean;
+}) {
   return (
     <div className="bg-bg-secondary rounded-md border border-border-primary p-4 shadow-sm">
       <div className="text-[12px] text-text-tertiary mb-1">{label}</div>
-      <div className={`text-[14px] font-medium text-text-primary ${mono ? 'font-mono' : ''}`}>
+      <div
+        className={`text-[14px] font-medium text-text-primary ${mono ? 'font-mono' : ''}`}
+      >
         {value}
       </div>
     </div>
   );
 }
 
-function MetricCard({ label, value, unit, sub }: {
-  label: string; value: number; unit: string; sub?: string;
+function MetricCard({
+  label,
+  value,
+  unit,
+  sub,
+}: {
+  label: string;
+  value: number;
+  unit: string;
+  sub?: string;
 }) {
-  const color = value >= 90 ? 'text-accent-danger' : value >= 70 ? 'text-accent-warning' : 'text-accent-success';
-  const barColor = value >= 90 ? 'bg-accent-danger' : value >= 70 ? 'bg-accent-warning' : 'bg-accent-success';
+  const color =
+    value >= 90
+      ? 'text-accent-danger'
+      : value >= 70
+        ? 'text-accent-warning'
+        : 'text-accent-success';
+  const barColor =
+    value >= 90
+      ? 'bg-accent-danger'
+      : value >= 70
+        ? 'bg-accent-warning'
+        : 'bg-accent-success';
 
   return (
     <div className="bg-bg-secondary rounded-md border border-border-primary p-4 shadow-sm">
       <div className="text-[12px] text-text-tertiary mb-2">{label}</div>
       <div className="flex items-baseline gap-1">
-        <span className={`text-[22px] font-bold ${color}`}>{value.toFixed(1)}</span>
+        <span className={`text-[22px] font-bold ${color}`}>
+          {value.toFixed(1)}
+        </span>
         <span className="text-[12px] text-text-tertiary">{unit}</span>
       </div>
       <div className="mt-2 h-1.5 bg-bg-tertiary rounded-full overflow-hidden">
-        <div className={`h-full rounded-full transition-all ${barColor}`} style={{ width: `${Math.min(value, 100)}%` }} />
+        <div
+          className={`h-full rounded-full transition-all ${barColor}`}
+          style={{ width: `${Math.min(value, 100)}%` }}
+        />
       </div>
-      {sub && <div className="text-[11px] text-text-tertiary mt-1.5">{sub}</div>}
+      {sub && (
+        <div className="text-[11px] text-text-tertiary mt-1.5">{sub}</div>
+      )}
     </div>
   );
 }
@@ -513,7 +654,9 @@ function SeverityBadge({ severity }: { severity: string }) {
     info: 'bg-accent-info/10 text-accent-info',
   };
   return (
-    <span className={`text-[10px] font-semibold uppercase px-1.5 py-0.5 rounded shrink-0 ${config[severity] || config.warning}`}>
+    <span
+      className={`text-[10px] font-semibold uppercase px-1.5 py-0.5 rounded shrink-0 ${config[severity] || config.warning}`}
+    >
       {severity}
     </span>
   );
@@ -524,14 +667,24 @@ function SeverityBadge({ severity }: { severity: string }) {
 function EventsList({ events }: { events: AgentEvent[] }) {
   const [filter, setFilter] = useState<EventFilter>('all');
 
+  const eventsWithoutScan = useMemo(
+    () => events.filter((e) => e.type !== 'scan'),
+    [events],
+  );
+
   const filtered = useMemo(
-    () => (filter === 'all' ? events : events.filter((e) => e.type === filter)),
-    [events, filter],
+    () =>
+      filter === 'all'
+        ? eventsWithoutScan
+        : eventsWithoutScan.filter((e) => e.type === filter),
+    [eventsWithoutScan, filter],
   );
 
   const grouped = useMemo(() => {
     const now = new Date();
-    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime() / 1000;
+    const todayStart =
+      new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime() /
+      1000;
     const yesterdayStart = todayStart - 86400;
 
     const groups: { label: string; events: AgentEvent[] }[] = [
@@ -550,22 +703,25 @@ function EventsList({ events }: { events: AgentEvent[] }) {
   }, [filtered]);
 
   const counts = useMemo(() => {
-    const c: Record<string, number> = { all: events.length };
-    for (const e of events) c[e.type] = (c[e.type] || 0) + 1;
+    const c: Record<string, number> = { all: eventsWithoutScan.length };
+    for (const e of eventsWithoutScan) c[e.type] = (c[e.type] || 0) + 1;
     return c;
-  }, [events]);
+  }, [eventsWithoutScan]);
 
   const filterButtons: { key: EventFilter; label: string }[] = [
     { key: 'all', label: 'All' },
     { key: 'status', label: 'Status' },
     { key: 'telemetry', label: 'Telemetry' },
-    { key: 'scan', label: 'Scan' },
     { key: 'anomaly', label: 'Anomaly' },
     { key: 'response', label: 'Response' },
   ];
 
-  if (events.length === 0) {
-    return <div className="text-center py-8 text-text-tertiary text-sm">No events yet.</div>;
+  if (eventsWithoutScan.length === 0) {
+    return (
+      <div className="text-center py-8 text-text-tertiary text-sm">
+        No events yet.
+      </div>
+    );
   }
 
   return (
@@ -605,7 +761,9 @@ function EventsList({ events }: { events: AgentEvent[] }) {
                 {group.label}
               </div>
               <div className="flex-1 h-px bg-border-primary" />
-              <span className="text-[11px] text-text-tertiary">{group.events.length}</span>
+              <span className="text-[11px] text-text-tertiary">
+                {group.events.length}
+              </span>
             </div>
             <div className="bg-bg-secondary rounded-md border border-border-primary shadow-sm divide-y divide-border-primary">
               {group.events.map((event) => (
@@ -632,13 +790,21 @@ function EventRow({ event }: { event: AgentEvent }) {
     <details className="group">
       <summary className="flex flex-wrap items-center gap-2 sm:gap-3 px-4 sm:px-5 py-3 hover:bg-bg-tertiary/30 cursor-pointer transition-colors list-none">
         <svg
-          width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-          strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
           className="text-text-tertiary shrink-0 transition-transform group-open:rotate-90"
         >
           <polyline points="9 18 15 12 9 6" />
         </svg>
-        <span className={`text-[11px] font-medium px-2 py-0.5 rounded-full shrink-0 ${badgeConfig[event.type] || 'bg-bg-tertiary text-text-tertiary'}`}>
+        <span
+          className={`text-[11px] font-medium px-2 py-0.5 rounded-full shrink-0 ${badgeConfig[event.type] || 'bg-bg-tertiary text-text-tertiary'}`}
+        >
           {event.type}
         </span>
         <span className="text-[13px] text-text-primary flex-1 truncate">
@@ -657,7 +823,8 @@ function EventRow({ event }: { event: AgentEvent }) {
 
 function EventDetail({ event }: { event: AgentEvent }) {
   const data = event.data as Record<string, unknown> | undefined;
-  if (!data) return <div className="text-[12px] text-text-tertiary py-2">No data</div>;
+  if (!data)
+    return <div className="text-[12px] text-text-tertiary py-2">No data</div>;
 
   switch (event.type) {
     case 'status':
@@ -677,7 +844,9 @@ function StatusDetail({ data }: { data: Record<string, unknown> }) {
   const status = String(data.status || 'unknown');
   return (
     <div className="flex items-center gap-3 py-2">
-      <div className={`w-2 h-2 rounded-full shrink-0 ${status === 'online' ? 'bg-accent-success' : 'bg-text-tertiary'}`} />
+      <div
+        className={`w-2 h-2 rounded-full shrink-0 ${status === 'online' ? 'bg-accent-success' : 'bg-text-tertiary'}`}
+      />
       <div>
         <div className="text-[13px] font-medium text-text-primary">
           Agent {status}
@@ -699,21 +868,64 @@ function TelemetryDetail({ data }: { data: Record<string, unknown> }) {
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 py-2">
-      {cpu && <MiniMetric label="CPU" value={cpu.usagePercent ?? 0} sub={cpu.cores ? `${cpu.cores} cores` : undefined} />}
-      {memory && <MiniMetric label="Memory" value={memory.usagePercent ?? 0} sub={memory.totalGB ? `${memory.freeGB?.toFixed(1) ?? '?'} / ${memory.totalGB.toFixed(1)} GB free` : undefined} />}
-      {disk && <MiniMetric label="Disk" value={disk.usagePercent ?? 0} sub={disk.totalGB ? `${disk.freeGB?.toFixed(1) ?? '?'} / ${disk.totalGB.toFixed(1)} GB free` : undefined} />}
+      {cpu && (
+        <MiniMetric
+          label="CPU"
+          value={cpu.usagePercent ?? 0}
+          sub={cpu.cores ? `${cpu.cores} cores` : undefined}
+        />
+      )}
+      {memory && (
+        <MiniMetric
+          label="Memory"
+          value={memory.usagePercent ?? 0}
+          sub={
+            memory.totalGB
+              ? `${memory.freeGB?.toFixed(1) ?? '?'} / ${memory.totalGB.toFixed(1)} GB free`
+              : undefined
+          }
+        />
+      )}
+      {disk && (
+        <MiniMetric
+          label="Disk"
+          value={disk.usagePercent ?? 0}
+          sub={
+            disk.totalGB
+              ? `${disk.freeGB?.toFixed(1) ?? '?'} / ${disk.totalGB.toFixed(1)} GB free`
+              : undefined
+          }
+        />
+      )}
       {!cpu && !memory && !disk && <RawDetail data={data} />}
     </div>
   );
 }
 
-function MiniMetric({ label, value, sub }: { label: string; value: number; sub?: string }) {
-  const color = value >= 90 ? 'text-accent-danger' : value >= 70 ? 'text-accent-warning' : 'text-accent-success';
+function MiniMetric({
+  label,
+  value,
+  sub,
+}: {
+  label: string;
+  value: number;
+  sub?: string;
+}) {
+  const color =
+    value >= 90
+      ? 'text-accent-danger'
+      : value >= 70
+        ? 'text-accent-warning'
+        : 'text-accent-success';
   return (
     <div className="bg-bg-primary rounded border border-border-primary p-3">
       <div className="text-[11px] text-text-tertiary">{label}</div>
-      <div className={`text-[16px] font-bold ${color}`}>{value.toFixed(1)}%</div>
-      {sub && <div className="text-[10px] text-text-tertiary mt-0.5">{sub}</div>}
+      <div className={`text-[16px] font-bold ${color}`}>
+        {value.toFixed(1)}%
+      </div>
+      {sub && (
+        <div className="text-[10px] text-text-tertiary mt-0.5">{sub}</div>
+      )}
     </div>
   );
 }
@@ -724,7 +936,9 @@ function AnomalyDetail({ data }: { data: Record<string, unknown> }) {
   const category = String(data.category || '');
   const type = String(data.type || '');
   const details =
-    data.details && typeof data.details === 'object' && !Array.isArray(data.details)
+    data.details &&
+    typeof data.details === 'object' &&
+    !Array.isArray(data.details)
       ? (data.details as Record<string, unknown>)
       : {};
 
@@ -735,10 +949,14 @@ function AnomalyDetail({ data }: { data: Record<string, unknown> }) {
   };
 
   return (
-    <div className={`rounded border ${borderColor[severity] || borderColor.warning} p-3 space-y-2`}>
+    <div
+      className={`rounded border ${borderColor[severity] || borderColor.warning} p-3 space-y-2`}
+    >
       <div className="flex items-center gap-2">
         <SeverityBadge severity={severity} />
-        <span className="text-[13px] font-medium text-text-primary">{message}</span>
+        <span className="text-[13px] font-medium text-text-primary">
+          {message}
+        </span>
       </div>
       <div className="text-[11px] text-text-tertiary space-x-2">
         {category && <span>Category: {category}</span>}
@@ -750,8 +968,14 @@ function AnomalyDetail({ data }: { data: Record<string, unknown> }) {
             if (val === null || val === undefined || val === '') return null;
             const display =
               typeof val === 'number'
-                ? Number.isInteger(val) ? String(val) : (val as number).toFixed(1)
-                : typeof val === 'boolean' ? (val ? 'yes' : 'no') : String(val);
+                ? Number.isInteger(val)
+                  ? String(val)
+                  : (val as number).toFixed(1)
+                : typeof val === 'boolean'
+                  ? val
+                    ? 'yes'
+                    : 'no'
+                  : String(val);
             return (
               <span key={key} className="text-[11px] text-text-tertiary">
                 <span className="text-text-secondary">{key}:</span> {display}
@@ -774,7 +998,9 @@ function ResponseDetail({ data }: { data: Record<string, unknown> }) {
   return (
     <div className="space-y-2 py-2">
       <div className="flex items-center gap-2">
-        <div className={`w-2 h-2 rounded-full shrink-0 ${isSuccess ? 'bg-accent-success' : 'bg-accent-danger'}`} />
+        <div
+          className={`w-2 h-2 rounded-full shrink-0 ${isSuccess ? 'bg-accent-success' : 'bg-accent-danger'}`}
+        />
         <span className="text-[13px] font-medium text-text-primary">
           {isSuccess ? 'Command succeeded' : 'Command failed'}
         </span>
@@ -808,7 +1034,11 @@ function RawDetail({ data }: { data: Record<string, unknown> }) {
 
 function CommandsList({ commands }: { commands: AgentCommand[] }) {
   if (commands.length === 0) {
-    return <div className="text-center py-8 text-text-tertiary text-sm">No commands sent yet.</div>;
+    return (
+      <div className="text-center py-8 text-text-tertiary text-sm">
+        No commands sent yet.
+      </div>
+    );
   }
 
   const statusColors: Record<string, string> = {
@@ -825,26 +1055,42 @@ function CommandsList({ commands }: { commands: AgentCommand[] }) {
         <details key={cmd.id} className="group">
           <summary className="flex flex-wrap items-center gap-2 sm:gap-3 px-4 sm:px-5 py-3 hover:bg-bg-tertiary/30 cursor-pointer transition-colors list-none">
             <svg
-              width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-              strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
               className="text-text-tertiary shrink-0 transition-transform group-open:rotate-90"
             >
               <polyline points="9 18 15 12 9 6" />
             </svg>
-            <code className="text-[12px] font-mono text-text-primary shrink-0">{cmd.action}</code>
-            <span className={`text-[11px] font-medium px-2 py-0.5 rounded-full shrink-0 ${statusColors[cmd.status] || 'bg-bg-tertiary text-text-tertiary'}`}>
+            <code className="text-[12px] font-mono text-text-primary shrink-0">
+              {cmd.action}
+            </code>
+            <span
+              className={`text-[11px] font-medium px-2 py-0.5 rounded-full shrink-0 ${statusColors[cmd.status] || 'bg-bg-tertiary text-text-tertiary'}`}
+            >
               {cmd.status}
             </span>
             {cmd.exit_code !== null && cmd.exit_code !== undefined && (
-              <span className="text-[11px] text-text-tertiary">exit: {cmd.exit_code}</span>
+              <span className="text-[11px] text-text-tertiary">
+                exit: {cmd.exit_code}
+              </span>
             )}
             <span className="flex-1" />
-            <span className="text-[12px] text-text-tertiary shrink-0">{formatTime(cmd.created_at)}</span>
+            <span className="text-[12px] text-text-tertiary shrink-0">
+              {formatTime(cmd.created_at)}
+            </span>
           </summary>
           <div className="px-5 pb-4 pt-1 space-y-2">
             {cmd.params && Object.keys(cmd.params).length > 0 && (
               <div>
-                <div className="text-[11px] font-medium text-text-tertiary mb-1">Params</div>
+                <div className="text-[11px] font-medium text-text-tertiary mb-1">
+                  Params
+                </div>
                 <pre className="bg-[#1e1e2e] text-[#a6adc8] rounded-sm p-3 text-[12px] font-mono overflow-x-auto">
                   {JSON.stringify(cmd.params, null, 2)}
                 </pre>
@@ -852,7 +1098,9 @@ function CommandsList({ commands }: { commands: AgentCommand[] }) {
             )}
             {cmd.result != null ? (
               <div>
-                <div className="text-[11px] font-medium text-text-tertiary mb-1">Result</div>
+                <div className="text-[11px] font-medium text-text-tertiary mb-1">
+                  Result
+                </div>
                 <pre className="bg-[#1e1e2e] text-[#a6adc8] rounded-sm p-3 text-[12px] font-mono overflow-x-auto max-h-[300px] overflow-y-auto">
                   {JSON.stringify(cmd.result, null, 2)}
                 </pre>
@@ -860,9 +1108,13 @@ function CommandsList({ commands }: { commands: AgentCommand[] }) {
             ) : null}
             {cmd.error && (
               <div>
-                <div className="text-[11px] font-medium text-accent-danger mb-1">Error</div>
+                <div className="text-[11px] font-medium text-accent-danger mb-1">
+                  Error
+                </div>
                 <div className="text-[13px] text-accent-danger bg-accent-danger/5 p-3 rounded-sm">
-                  {typeof cmd.error === 'string' ? cmd.error : String(cmd.error ?? '')}
+                  {typeof cmd.error === 'string'
+                    ? cmd.error
+                    : String(cmd.error ?? '')}
                 </div>
               </div>
             )}
@@ -882,16 +1134,20 @@ function getEventSummary(event: AgentEvent): string {
   const cpu = data?.cpu as { usagePercent?: number } | undefined;
   const memory = data?.memory as { usagePercent?: number } | undefined;
   const disk = data?.disk as { usagePercent?: number } | undefined;
-  const commandId = typeof data?.commandId === 'string' ? data.commandId.slice(0, 8) : '';
+  const commandId =
+    typeof data?.commandId === 'string' ? data.commandId.slice(0, 8) : '';
 
   switch (event.type) {
     case 'status':
       return `Agent ${String(data?.status || 'unknown')}`;
     case 'telemetry': {
       const parts: string[] = [];
-      if (cpu?.usagePercent !== undefined) parts.push(`CPU ${cpu.usagePercent.toFixed(1)}%`);
-      if (memory?.usagePercent !== undefined) parts.push(`Mem ${memory.usagePercent.toFixed(1)}%`);
-      if (disk?.usagePercent !== undefined) parts.push(`Disk ${disk.usagePercent.toFixed(1)}%`);
+      if (cpu?.usagePercent !== undefined)
+        parts.push(`CPU ${cpu.usagePercent.toFixed(1)}%`);
+      if (memory?.usagePercent !== undefined)
+        parts.push(`Mem ${memory.usagePercent.toFixed(1)}%`);
+      if (disk?.usagePercent !== undefined)
+        parts.push(`Disk ${disk.usagePercent.toFixed(1)}%`);
       return parts.length > 0 ? parts.join(' / ') : 'System metrics';
     }
     case 'scan': {
