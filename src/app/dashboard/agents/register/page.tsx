@@ -10,6 +10,12 @@ const AGENT_RELEASE_BASE =
 const OS_OPTIONS = [
   { id: 'linux', label: 'Linux (x64)', asset: 'soc-linux', isWindows: false },
   {
+    id: 'linux-arm64',
+    label: 'Linux (ARM64 / Raspberry Pi 4/5)',
+    asset: 'soc-linux-arm64',
+    isWindows: false,
+  },
+  {
     id: 'darwin-arm64',
     label: 'macOS (Apple Silicon)',
     asset: 'soc-darwin-arm64',
